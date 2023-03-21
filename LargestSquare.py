@@ -24,7 +24,7 @@ camera = PiCamera(
 sleep(2)
 
 gray = takePic()
-gray = preProc(gray)
+# gray = preProc(gray)
 kernel = np.ones((5,5),np.float32)/25
 img_blur = cv2.filter2D(gray,-1,kernel)
 edges= cv2.Canny(gray, 50,200)
@@ -44,6 +44,13 @@ for cnt in contours:
 sorted_contours= sorted(contours, key=cv2.contourArea, reverse= True)
 max_square = sorted_contours[0]
 x, y, w, h = cv2.boundingRect(max_square)
+pts1 = np.float32([[x, y], [x+w, y], [x, y+h], [x+w, y+h]])
+pts2 = np.float32([[0, 0], [525, 0], [0, 525], [525, 525]])
+matrix = cv2.getPerspectiveTransform(pts1, pts2)
+result = cv2.warpPerspective(gray, matrix, (525, 525))
+cv2.imshow("ChessBoard", result)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
 print("Top Left x: ", x)
 print("Top Left y: ", y)
 print("Top Right x: ", x+w)
@@ -52,3 +59,4 @@ print("Bottom Left x: ", x)
 print("Bottom Left y: ", y+h)
 print("Bottom Right x: ", x+w)
 print("Bottom Right y: ", y+h)
+
